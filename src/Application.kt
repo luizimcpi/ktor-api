@@ -1,5 +1,6 @@
 package com.devlhse
 
+import com.auth0.jwk.JwkProviderBuilder
 import com.devlhse.exception.InvalidCredentialsException
 import com.devlhse.model.*
 import io.ktor.application.*
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.*
 import io.ktor.auth.jwt.jwt
 import io.ktor.jackson.*
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -36,8 +38,7 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    //TODO verificar como pegar secret do application.conf
-    val simpleJwt = SimpleJWT("devlhse-ktor-api-jwt")
+    val simpleJwt = SimpleJWT(environment.config.property("jwt.secret").getString())
     install(Authentication) {
         jwt {
             verifier(simpleJwt.verifier)
@@ -55,8 +56,8 @@ fun Application.module(testing: Boolean = false) {
 
     //TODO extrair essa responsabilidade para um service
     val snippets = Collections.synchronizedList(mutableListOf(
-        Snippet("hello"),
-        Snippet("world")
+        Snippet(text = "hello"),
+        Snippet(text = "world")
     ))
 
     //TODO criar cadastro de users e extrair essa responsabilidade para um service
@@ -86,8 +87,13 @@ fun Application.module(testing: Boolean = false) {
                 }
                 post {
                     val post = call.receive<PostSnippet>()
-                    snippets += Snippet(post.snippet.text)
-                    call.respond(mapOf("CREATED" to true))
+                    snippets += Snippet(text = post.snippet.text)
+                    call.respond(HttpStatusCode.Created, mapOf("CREATED" to true))
+                }
+                delete("/{id}") {
+                    val id = call.parameters["id"]
+                    println("Delete Snippet id >>>: $id")
+                    call.respond(HttpStatusCode.NoContent)
                 }
             }
         }
