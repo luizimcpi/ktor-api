@@ -36,5 +36,7 @@ dependencies {
     compile "io.ktor:ktor-auth:$ktor_version"
     compile "io.ktor:ktor-auth-jwt:$ktor_version"
     compile "io.ktor:ktor-jackson:$ktor_version"
+    compile "org.koin:koin-core:$koin_version"
+    testCompile "org.koin:koin-test:$koin_version"
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
 }

@@ -1,20 +1,31 @@
 package com.devlhse
 
-import com.auth0.jwk.JwkProviderBuilder
 import com.devlhse.exception.InvalidCredentialsException
-import com.devlhse.model.*
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.features.*
-import io.ktor.routing.*
-import io.ktor.http.*
-import io.ktor.auth.*
-import com.fasterxml.jackson.databind.*
+import com.devlhse.model.PostSnippet
+import com.devlhse.model.SimpleJWT
+import com.devlhse.model.Snippet
+import com.devlhse.model.User
+import com.devlhse.service.SnippetServiceImpl
+import com.fasterxml.jackson.databind.SerializationFeature
+import io.ktor.application.Application
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
-import io.ktor.jackson.*
+import io.ktor.features.CORS
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.StatusPages
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.jackson.jackson
+import io.ktor.request.receive
+import io.ktor.request.receiveParameters
+import io.ktor.response.respond
+import io.ktor.routing.*
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -54,12 +65,6 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    //TODO extrair essa responsabilidade para um service
-    val snippets = Collections.synchronizedList(mutableListOf(
-        Snippet(text = "hello"),
-        Snippet(text = "world")
-    ))
-
     //TODO criar cadastro de users e extrair essa responsabilidade para um service
     val users = Collections.synchronizedMap(
         listOf(User("luizhse", "Test@1234"))
@@ -67,12 +72,14 @@ fun Application.module(testing: Boolean = false) {
             .toMutableMap()
     )
 
+    val snippetService = SnippetServiceImpl()
+
     routing {
         get("/health") {
             call.respond(mapOf("status" to "OK"))
         }
 
-        post("/login-register") {
+        post("/auth/token") {
             val post = call.receiveParameters()
             val postUser = post["user"]
             val postPassword = post["password"]
@@ -86,11 +93,11 @@ fun Application.module(testing: Boolean = false) {
             //Snippets Route
             route("/snippets") {
                 get {
-                    call.respond(mapOf("snippets" to synchronized(snippets) { snippets.toList() }))
+                    call.respond(mapOf("snippets" to synchronized(snippetService.getSnippets()) { snippetService.getSnippets().toList() }))
                 }
                 post {
                     val post = call.receive<PostSnippet>()
-                    snippets += Snippet(text = post.snippet.text)
+                    snippetService.getSnippets() += Snippet(text = post.snippet.text)
                     call.respond(HttpStatusCode.Created, mapOf("CREATED" to true))
                 }
                 delete("/{id}") {
@@ -102,4 +109,5 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 }
+
 
