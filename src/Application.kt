@@ -73,9 +73,12 @@ fun Application.module(testing: Boolean = false) {
         }
 
         post("/login-register") {
-            val post = call.receive<LoginRegister>()
-            val user = users.getOrPut(post.user) { User(post.user, post.password) }
-            if (user.password != post.password) throw InvalidCredentialsException("Invalid credentials")
+            val post = call.receiveParameters()
+            val postUser = post["user"]
+            val postPassword = post["password"]
+
+            val user = users.getOrPut(postUser) { User(postUser!!, postPassword!!) }
+            if (user.password != postPassword) throw InvalidCredentialsException("Invalid credentials")
             call.respond(mapOf("token" to simpleJwt.sign(user.name)))
         }
 
