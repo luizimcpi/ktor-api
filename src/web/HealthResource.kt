@@ -8,6 +8,7 @@ import io.ktor.routing.get
 fun Route.health() {
 
     get("/health") {
+        call.application.environment.log.info("Health Status has been called...")
         call.respond(mapOf("status" to "OK"))
     }
 

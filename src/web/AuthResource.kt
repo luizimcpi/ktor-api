@@ -24,6 +24,7 @@ fun Route.auth(authService: AuthService, simpleJwt: SimpleJWT) {
 
         val user = authService.getUsers().getOrPut(postUser) { User(postUser!!, postPassword!!) }
         if (user.password != postPassword) throw InvalidCredentialsException("Invalid credentials")
+        call.application.environment.log.info("Passando pela autenticação...")
         call.respond(mapOf("token" to simpleJwt.sign(user.name)))
     }
 
