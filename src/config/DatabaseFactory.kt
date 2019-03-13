@@ -1,6 +1,7 @@
 package com.devlhse.service
 
 import com.devlhse.model.Snippets
+import com.devlhse.model.Users
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,13 @@ object DatabaseFactory {
             }
             Snippets.insert {
                 it[text] = "snippet two"
+                it[dateUpdated] = System.currentTimeMillis()
+            }
+            create(Users)
+            Users.insert {
+                it[name] = "luizhse"
+                it[password] = "VGVzdEAxMjM0YWNiZmZjMzAtMWQ4YS00ZDg1LWFmZTctMDhiYWI2MTIyOTU2"
+                it[salt] = "acbffc30-1d8a-4d85-afe7-08bab6122956"
                 it[dateUpdated] = System.currentTimeMillis()
             }
         }
