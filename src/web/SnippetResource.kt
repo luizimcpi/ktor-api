@@ -1,5 +1,6 @@
 package com.devlhse.web
 
+import com.devlhse.exception.SnippetsNotFoundException
 import com.devlhse.model.PostSnippet
 import com.devlhse.service.SnippetService
 import io.ktor.application.call
@@ -26,8 +27,8 @@ fun Route.snippet(snippetService: SnippetService) {
                 val id = call.parameters["id"]!!.toInt()
                 call.application.environment.log.info("Searching for snippet id: $id")
                 val snippet = snippetService.getSnippet(id)
-                if (snippet == null) call.respond(HttpStatusCode.NotFound)
-                call.respond(HttpStatusCode.Created, mapOf("snippet" to snippet))
+                if (snippet == null) throw SnippetsNotFoundException("Snippet not found")
+                else call.respond(HttpStatusCode.Created, mapOf("snippet" to snippet))
             }
             post {
                 call.application.environment.log.info("Creating new snippet...")
@@ -43,10 +44,10 @@ fun Route.snippet(snippetService: SnippetService) {
             }
             delete("/{id}") {
                 val id = call.parameters["id"]!!.toInt()
-                call.application.environment.log.info("Deleting snippet id: $id")
+                call.application.environment.log.info("Searching for snippet id: $id to delete")
                 val removed = snippetService.deleteSnippet(id)
                 if (removed) call.respond(HttpStatusCode.OK)
-                else call.respond(HttpStatusCode.NotFound)
+                else throw SnippetsNotFoundException("Snippet not found")
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.devlhse
 
 import com.devlhse.exception.InvalidCredentialsException
+import com.devlhse.exception.SnippetsNotFoundException
 import com.devlhse.model.SimpleJWT
 import com.devlhse.service.AuthServiceImpl
 import com.devlhse.service.DatabaseFactory
@@ -43,7 +44,10 @@ fun Application.module(testing: Boolean = false) {
 
     install(StatusPages) {
         exception<InvalidCredentialsException> { exception ->
-            call.respond(HttpStatusCode.Unauthorized, mapOf("OK" to false, "error" to (exception.message ?: "")))
+            call.respond(HttpStatusCode.Unauthorized, mapOf("error" to (exception.message ?: "")))
+        }
+        exception<SnippetsNotFoundException> { exception ->
+            call.respond(HttpStatusCode.NotFound, mapOf("error" to (exception.message ?: "")))
         }
     }
 
