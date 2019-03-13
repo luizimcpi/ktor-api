@@ -1,10 +1,10 @@
-# Ktor API
+# ktor-api
 
 ```
 A simple API CRUD using:
 ```
 
-[Kotlin](https://github.com/JetBrains/kotlin)
+[Kotlin](https://github.com/JetBrains/kotlin) - Kotlin language
 
 [Ktor](https://ktor.io/) - Kotlin async web framework
 

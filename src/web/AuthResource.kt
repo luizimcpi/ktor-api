@@ -12,6 +12,11 @@ import io.ktor.routing.post
 
 fun Route.auth(authService: AuthService, simpleJwt: SimpleJWT) {
 
+//    val call = handleRequest(HttpMethod.Post, "/auth/login") {
+//        addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+//        setBody(listOf("name1" to "value1", "name2" to "value2").formUrlEncode())
+//    }
+
     post("/auth/login") {
         val post = call.receiveParameters()
         val postUser = post["user"]
