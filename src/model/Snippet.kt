@@ -10,7 +10,6 @@ object Snippets : Table() {
 
 data class Snippet(val id: Int, val text: String, val dateUpdated: Long)
 
-
 data class PostSnippet(
     val id: Int?,
     val text: String

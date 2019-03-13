@@ -11,5 +11,4 @@ fun Route.health() {
         call.application.environment.log.info("Health Status has been called...")
         call.respond(mapOf("status" to "OK"))
     }
-
 }

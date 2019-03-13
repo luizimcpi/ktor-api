@@ -1,10 +1,19 @@
 package com.devlhse.service
 
-import com.devlhse.model.*
+import com.devlhse.model.Notification
+import com.devlhse.model.Snippet
+import com.devlhse.model.Snippets
+import com.devlhse.model.PostSnippet
+import com.devlhse.model.ChangeType
 import com.devlhse.service.DatabaseFactory.dbQuery
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.ResultRow
 
-class SnippetServiceImpl: SnippetService{
+class SnippetServiceImpl : SnippetService {
 
     private val listeners = mutableMapOf<Int, suspend (Notification<Snippet?>) -> Unit>()
 
@@ -36,7 +45,7 @@ class SnippetServiceImpl: SnippetService{
         return dbQuery {
             Snippets.deleteWhere { Snippets.id eq id } > 0
         }.also {
-            if(it) onChange(ChangeType.DELETE, id)
+            if (it) onChange(ChangeType.DELETE, id)
         }
     }
 
@@ -64,7 +73,7 @@ class SnippetServiceImpl: SnippetService{
             dateUpdated = row[Snippets.dateUpdated]
         )
 
-    private suspend fun onChange(type: ChangeType, id: Int, entity: Snippet?=null) {
+    private suspend fun onChange(type: ChangeType, id: Int, entity: Snippet? = null) {
         listeners.values.forEach {
             it.invoke(Notification(type, id, entity))
         }

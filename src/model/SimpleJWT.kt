@@ -2,7 +2,7 @@ package com.devlhse.model
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import java.util.*
+import java.util.Date
 
 open class SimpleJWT(val secret: String) {
     private val validityInMs = 36_000_00 * 1 // 1 hour

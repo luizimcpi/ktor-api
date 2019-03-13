@@ -1,9 +1,9 @@
 package com.devlhse.service
 
 import com.devlhse.model.User
-import java.util.*
+import java.util.Collections
 
-class AuthServiceImpl: AuthService{
+class AuthServiceImpl : AuthService {
 
     override fun getUsers(): MutableMap<String?, User> {
         return Collections.synchronizedMap(
@@ -12,5 +12,4 @@ class AuthServiceImpl: AuthService{
                 .toMutableMap()
         )
     }
-
 }

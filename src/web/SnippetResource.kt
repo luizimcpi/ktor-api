@@ -7,12 +7,16 @@ import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.routing.*
+import io.ktor.routing.Route
+import io.ktor.routing.route
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.put
+import io.ktor.routing.delete
 
 fun Route.snippet(snippetService: SnippetService) {
 
     authenticate {
-        //Snippets Route
         route("/snippets") {
             get {
                 call.application.environment.log.info("Searching for snippets...")
@@ -34,7 +38,7 @@ fun Route.snippet(snippetService: SnippetService) {
             put {
                 val snippet = call.receive<PostSnippet>()
                 val updated = snippetService.updateSnippet(snippet)
-                if(updated == null) call.respond(HttpStatusCode.NotFound)
+                if (updated == null) call.respond(HttpStatusCode.NotFound)
                 else call.respond(HttpStatusCode.OK, updated)
             }
             delete("/{id}") {
@@ -46,5 +50,4 @@ fun Route.snippet(snippetService: SnippetService) {
             }
         }
     }
-
 }
