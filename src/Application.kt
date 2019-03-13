@@ -3,6 +3,7 @@ package com.devlhse
 import com.devlhse.exception.InvalidCredentialsException
 import com.devlhse.model.SimpleJWT
 import com.devlhse.service.AuthServiceImpl
+import com.devlhse.service.DatabaseFactory
 import com.devlhse.service.SnippetServiceImpl
 import com.devlhse.web.auth
 import com.devlhse.web.health
@@ -62,6 +63,7 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
+    DatabaseFactory.init()
     val snippetService = SnippetServiceImpl()
     val authService = AuthServiceImpl()
 

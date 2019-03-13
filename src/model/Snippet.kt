@@ -1,9 +1,17 @@
 package com.devlhse.model
 
-import java.util.*
+import org.jetbrains.exposed.sql.Table
 
-data class Snippet(val id: String = UUID.randomUUID().toString(), val text: String)
-
-data class PostSnippet(val snippet: PostSnippet.Text) {
-    data class Text(val text: String)
+object Snippets : Table() {
+    val id = integer("id").autoIncrement().primaryKey()
+    val text = varchar("text", 255)
+    val dateUpdated = long("dateUpdated")
 }
+
+data class Snippet(val id: Int, val text: String, val dateUpdated: Long)
+
+
+data class PostSnippet(
+    val id: Int?,
+    val text: String
+)

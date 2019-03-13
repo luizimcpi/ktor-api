@@ -1,7 +1,6 @@
 package com.devlhse.web
 
 import com.devlhse.model.PostSnippet
-import com.devlhse.model.Snippet
 import com.devlhse.service.SnippetService
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -17,18 +16,33 @@ fun Route.snippet(snippetService: SnippetService) {
         route("/snippets") {
             get {
                 call.application.environment.log.info("Searching for snippets...")
-                call.respond(mapOf("snippets" to synchronized(snippetService.getSnippets()) { snippetService.getSnippets().toList() }))
+                call.respond(snippetService.getSnippets())
+            }
+            get("/{id}") {
+                val id = call.parameters["id"]!!.toInt()
+                call.application.environment.log.info("Searching for snippet id: $id")
+                val snippet = snippetService.getSnippet(id)
+                if (snippet == null) call.respond(HttpStatusCode.NotFound)
+                call.respond(HttpStatusCode.Created, mapOf("snippet" to snippet))
             }
             post {
                 call.application.environment.log.info("Creating new snippet...")
                 val post = call.receive<PostSnippet>()
-                snippetService.getSnippets() += Snippet(text = post.snippet.text)
-                call.respond(HttpStatusCode.Created, mapOf("CREATED" to true))
+                val snippetCreated = snippetService.createSnippet(post)
+                call.respond(HttpStatusCode.Created, mapOf("snippet" to snippetCreated))
+            }
+            put {
+                val snippet = call.receive<PostSnippet>()
+                val updated = snippetService.updateSnippet(snippet)
+                if(updated == null) call.respond(HttpStatusCode.NotFound)
+                else call.respond(HttpStatusCode.OK, updated)
             }
             delete("/{id}") {
-                val id = call.parameters["id"]
+                val id = call.parameters["id"]!!.toInt()
                 call.application.environment.log.info("Deleting snippet id: $id")
-                call.respond(HttpStatusCode.NoContent)
+                val removed = snippetService.deleteSnippet(id)
+                if (removed) call.respond(HttpStatusCode.OK)
+                else call.respond(HttpStatusCode.NotFound)
             }
         }
     }
