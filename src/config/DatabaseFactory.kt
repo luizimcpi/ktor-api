@@ -28,7 +28,7 @@ object DatabaseFactory {
             create(Users)
             Users.insert {
                 it[name] = "luizhse"
-                it[password] = "VGVzdEAxMjM0YWNiZmZjMzAtMWQ4YS00ZDg1LWFmZTctMDhiYWI2MTIyOTU2" //BASE64 (Test@1234acbffc30-1d8a-4d85-afe7-08bab6122956)
+                it[password] = "VGVzdEAxMjM0YWNiZmZjMzAtMWQ4YS00ZDg1LWFmZTctMDhiYWI2MTIyOTU2" // BASE64 (Test@1234acbffc30-1d8a-4d85-afe7-08bab6122956)
                 it[salt] = "acbffc30-1d8a-4d85-afe7-08bab6122956"
                 it[dateUpdated] = System.currentTimeMillis()
             }
