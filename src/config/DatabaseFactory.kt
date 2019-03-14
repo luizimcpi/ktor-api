@@ -38,12 +38,12 @@ object DatabaseFactory {
     private fun hikari(): HikariDataSource {
         val config = HikariConfig()
 //        Mysql configs
-        config.driverClassName = "com.mysql.jdbc.Driver"
-        config.jdbcUrl="jdbc:mysql://localhost:3306/ktorapi"
-        config.username = "admin"
-        config.password = "admin"
-//        config.driverClassName = "org.h2.Driver"
-//        config.jdbcUrl = "jdbc:h2:mem:test"
+//        config.driverClassName = "com.mysql.jdbc.Driver"
+//        config.jdbcUrl="jdbc:mysql://localhost:3306/ktorapi"
+//        config.username = "admin"
+//        config.password = "admin"
+        config.driverClassName = "org.h2.Driver"
+        config.jdbcUrl = "jdbc:h2:mem:test"
         config.maximumPoolSize = 3
         config.isAutoCommit = false
         config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
