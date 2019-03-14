@@ -28,7 +28,7 @@ object DatabaseFactory {
             create(Users)
             Users.insert {
                 it[name] = "luizhse"
-                it[password] = "VGVzdEAxMjM0YWNiZmZjMzAtMWQ4YS00ZDg1LWFmZTctMDhiYWI2MTIyOTU2"
+                it[password] = "VGVzdEAxMjM0YWNiZmZjMzAtMWQ4YS00ZDg1LWFmZTctMDhiYWI2MTIyOTU2" //BASE64 (Test@1234acbffc30-1d8a-4d85-afe7-08bab6122956)
                 it[salt] = "acbffc30-1d8a-4d85-afe7-08bab6122956"
                 it[dateUpdated] = System.currentTimeMillis()
             }
@@ -37,8 +37,13 @@ object DatabaseFactory {
 
     private fun hikari(): HikariDataSource {
         val config = HikariConfig()
-        config.driverClassName = "org.h2.Driver"
-        config.jdbcUrl = "jdbc:h2:mem:test"
+//        Mysql configs
+        config.driverClassName = "com.mysql.jdbc.Driver"
+        config.jdbcUrl="jdbc:mysql://localhost:3306/ktorapi"
+        config.username = "admin"
+        config.password = "admin"
+//        config.driverClassName = "org.h2.Driver"
+//        config.jdbcUrl = "jdbc:h2:mem:test"
         config.maximumPoolSize = 3
         config.isAutoCommit = false
         config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
