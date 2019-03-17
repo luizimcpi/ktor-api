@@ -4,6 +4,7 @@ import com.devlhse.model.Snippets
 import com.devlhse.model.Users
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import io.ktor.config.ApplicationConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Database
@@ -13,8 +14,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
-    fun init() {
-        Database.connect(hikari())
+    fun init(enviroment: ApplicationConfig) {
+        Database.connect(hikari(enviroment))
         transaction {
             create(Snippets)
             Snippets.insert {
@@ -35,18 +36,18 @@ object DatabaseFactory {
         }
     }
 
-    private fun hikari(): HikariDataSource {
+    private fun hikari(enviroment: ApplicationConfig): HikariDataSource {
         val config = HikariConfig()
 //        Mysql configs
-//        config.driverClassName = "com.mysql.jdbc.Driver"
-//        config.jdbcUrl="jdbc:mysql://localhost:3306/ktorapi"
-//        config.username = "admin"
-//        config.password = "admin"
-        config.driverClassName = "org.h2.Driver"
-        config.jdbcUrl = "jdbc:h2:mem:test"
+//        config.driverClassName = enviroment.property("database.mysql.driver.class.name").getString()
+//        config.jdbcUrl = enviroment.property("database.mysql.jdbc.url").getString()
+//        config.username = enviroment.property("database.mysql.username").getString()
+//        config.password = enviroment.property("database.mysql.password").getString()
+        config.driverClassName = enviroment.property("database.h2.driver.class.name").getString()
+        config.jdbcUrl = enviroment.property("database.h2.jdbc.url").getString()
         config.maximumPoolSize = 3
         config.isAutoCommit = false
-        config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+        config.transactionIsolation = enviroment.property("database.transaction.isolation").getString()
         config.validate()
         return HikariDataSource(config)
     }

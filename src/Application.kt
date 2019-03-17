@@ -67,7 +67,7 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    DatabaseFactory.init()
+    DatabaseFactory.init(environment.config)
     val snippetService = SnippetServiceImpl()
     val authService = AuthServiceImpl()
 
